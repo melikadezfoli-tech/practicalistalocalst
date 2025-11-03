@@ -1,11 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="css/main.css">
+    <title>Lista de productos con LocalStorage</title>
 </head>
 <body>
+   
+    <header> 
+        <p>Tienda de productos</p>
+    </header>
+    <main class="flexContainer">
+        
+        <h1>Carrito de la compra</h1>
+        <form method="post" class="flexContainer" id="formulario">
+            <label for="producto">
+                Nombre del producto
+            </label>
+            <input type="text" name="producto" class="productoInput" id="producto" placeholder="Indique el nombre del producto">
+            <input class="btn" id="agregar" type="submit" value="Agregar">
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="carrito">
+            </tbody>
+        </table>
+    </main>
     <script src="js/main.js"></script>
 </body>
-</html>

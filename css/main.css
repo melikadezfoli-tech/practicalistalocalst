@@ -1,0 +1,51 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.flexContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    width:95%;
+}
+
+p {
+    text-align: center;
+}
+
+p, label, .productoInput, .btn {
+    margin: 1em;
+}
+
+.productoInput {
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0.5em 1em;
+}
+.btn {
+    cursor: pointer;
+    padding: 0.5em 1em;
+    border-radius: 10px;
+}
+
+form, table {
+    margin: 1em;
+}
+
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 0.3em;
+}
