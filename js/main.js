@@ -4,19 +4,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const formulario = document.querySelector('#formulario');
     const producto = document.querySelector('#producto');
     const carrito = document.querySelector('#carrito');
+    const botonEliminar = document.querySelectorAll('.eliminar');
 
     cargarProductos();
 
     //EVENTOS
-    //Agregar
+    //Agregar producto
     formulario.addEventListener('submit', (ev) => {
         ev.preventDefault();
         const valor = producto.value.toLowerCase().trim();
         agregarProducto(valor);
     })
 
-    //Eliminar
-    //eliminarProducto();
+    //Eliminar producto
+    document.addEventListener('click', (ev) => {
+        let botonClicado = ev.target;
+        if (botonClicado.matches('.eliminar')) {
+            eliminarProducto(botonClicado);
+        }
+    })
 
     //FUNCIONES
 
@@ -24,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //esta declarada con "function" para poder llamarla antes del declarar
     function cargarProductos() {
         let listaProductos = JSON.parse(localStorage.getItem('productosLocal')) || [];
+        //limpiar el carrito antes de recargar los productos
         carrito.innerHTML = '';
         listaProductos.forEach((producto) => {
             pintarFila(producto);
@@ -79,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nombreProducto.textContent = productoNuevo.nombre;
         cantidadProducto.textContent = productoNuevo.cantidad;
         btnEliminar.textContent = 'Eliminar';
-        btnEliminar.classList.add('btn');
+        btnEliminar.classList.add('btn', 'eliminar');
 
         btnProducto.append(btnEliminar);
         filaElemento.append(nombreProducto);
@@ -98,12 +105,24 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+    //al hacer clic, debe decrementar el contador de ese producto. 
+    // Si el contador llega a cero, el producto debe eliminarse de la lista y del Local Storage.
+    const eliminarProducto = (botonClicado) => {
+        //obtener la fila-padre que contiene el botón:
+        const fila = botonClicado.closest('tr');
+        const nombreProducto = fila.children[0].textContent;
 
-
-
-    // const eliminarProducto = () => {
-    //     //al hacer clic, debe decrementar el contador de ese producto. 
-    //     // Si el contador llega a cero, el producto debe eliminarse de la lista y del Local Storage.
-    // }
+        let listaProductos = JSON.parse(localStorage.getItem('productosLocal')) || [];
+        const productoAEliminar = listaProductos.find((producto) => producto.nombre === nombreProducto)
+        productoAEliminar.cantidad--;
+        if (productoAEliminar.cantidad > 1) {
+            fila.children[1].textContent = productoAEliminar.cantidad;
+        } else {
+            //filtramos y eliminamos de la lista el producto del botón clicado.
+            listaProductos = listaProductos.filter((producto) => producto.nombre !== nombreProducto);
+            carrito.removeChild(fila);
+        }
+        localStorage.setItem('productosLocal', JSON.stringify(listaProductos));
+    }
 
 });
