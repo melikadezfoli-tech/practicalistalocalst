@@ -1,80 +1,109 @@
-//VARIABLES
-const formulario = document.querySelector('#formulario');
-const producto = document.querySelector('#producto');
-const carrito = document.querySelector('#carrito');
-let listaProductos = [];
+document.addEventListener('DOMContentLoaded', () => {
 
-//EVENTOS
-//Agregar
-formulario.addEventListener('submit', (ev) => {
-    ev.preventDefault();
-    const valor = producto.value.toLowerCase().trim();
-    agregarProducto(valor);
-})
+    //VARIABLES
+    const formulario = document.querySelector('#formulario');
+    const producto = document.querySelector('#producto');
+    const carrito = document.querySelector('#carrito');
 
+    cargarProductos();
 
-//Eliminar
-//eliminarProducto();
+    //EVENTOS
+    //Agregar
+    formulario.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const valor = producto.value.toLowerCase().trim();
+        agregarProducto(valor);
+    })
 
-//FUNCIONES
+    //Eliminar
+    //eliminarProducto();
 
-const validarInput = (valor) => {
-    //comprobar que sean letras y pueden estar separadas por un espacio, 
-    // no números, no símbolos,
-    const regexp = /^[a-záéíóúüñÁÉÍÓÚÜÑ\s]+$/gi;
-    if (regexp.test(valor)) {
-        return true;
-    } else {
-        alert('Escribe el producto correctamente.');
-        return false;
-    }
-}
+    //FUNCIONES
 
-const comprobarRepetido = (productosLocal, valor) => {
-    //una variable para devolver un valor booleano fuera del forEach
-    let encontrado = false;
-    productosLocal.forEach((producto) => {
-        if (producto.nombre === valor) {
-            producto.cantidad++;
-            console.log("iguales")
-            console.log(producto.nombre);
-            encontrado =  true;
+    //cargar los productos del locaStorage al cargar la página
+    //esta declarada con "function" para poder llamarla antes del declarar
+    function cargarProductos() {
+        let listaProductos = JSON.parse(localStorage.getItem('productosLocal')) || [];
+        carrito.innerHTML = '';
+        listaProductos.forEach((producto) => {
+            pintarFila(producto);
+        });
+    };
+
+    const validarInput = (valor) => {
+        //comprobar que sean letras
+        const regexp = /^[a-záéíóúüñÁÉÍÓÚÜÑ]+$/gi;
+        if (regexp.test(valor)) {
+            return true;
+        } else {
+            alert('Escribe el producto correctamente.');
+            return false;
         }
-    });
-    return encontrado;
-}
-
-//Creamos y pintamos la fila con el producto nuevo 
-// (nombre, cantidad y el botón eliminar) o incrementamos el que existe
-const pintarTabla = () => {
-
-}
-
-
-const agregarProducto = (valor) => {
-    let valido = true;
-    valido = validarInput(valor);
-    if (valido === true) {
-        //obtener productos
-        //Busca el valor en localStorage; si no existe, devuelve null.
-        //Si se devuelve null, se asigna un valor vacío [] para evitar errores.
-        productosLocal = JSON.parse(localStorage.getItem('listaProductos')) || [];
-        console.log(listaProductos);
-        //Comprobamos si el producto está repetido
-        let productoRepetido = comprobarRepetido(productosLocal, valor);
-
-        if (productoRepetido === false) {
-            productosLocal.push({ nombre: valor, cantidad: 1 });
-        }
-        //guardar productos:
-        localStorage.setItem('listaProductos', JSON.stringify(productosLocal));
-        pintarTabla();
     }
-}
+
+    const agregarProducto = (valor) => {
+        let valido = true;
+        valido = validarInput(valor);
+        if (valido === true) {
+            //obtener productos
+            //Busca el valor en localStorage; si no existe, devuelve null.
+            //Si se devuelve null, se asigna un valor vacío [] para evitar errores.
+            let listaProductos = JSON.parse(localStorage.getItem('productosLocal')) || [];
+
+            //Comprobamos si el producto está repetido
+            const productoExiste = listaProductos.find((prod) => prod.nombre === valor);
+            if (productoExiste) {
+                productoExiste.cantidad++;
+                actualizarCantidad(valor, productoExiste.cantidad);
+            } else {
+                const nuevoProducto = { nombre: valor, cantidad: 1 }
+                listaProductos.push(nuevoProducto);
+                pintarFila(nuevoProducto);
+            }
+            //guardar productos:
+            localStorage.setItem('productosLocal', JSON.stringify(listaProductos));
+        }
+    }
+
+    //Creamos y pintamos la fila con el producto nuevo 
+    // (nombre, cantidad y el botón eliminar) o incrementamos el que existe
+    //esta declarada con "function" para poder llamarla antes del declarar
+    function pintarFila(productoNuevo) {
+
+        const filaElemento = document.createElement('TR');
+        const nombreProducto = document.createElement('TD');
+        const cantidadProducto = document.createElement('TD');
+        const btnProducto = document.createElement('TD');
+        const btnEliminar = document.createElement('BUTTON');
+
+        nombreProducto.textContent = productoNuevo.nombre;
+        cantidadProducto.textContent = productoNuevo.cantidad;
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.classList.add('btn');
+
+        btnProducto.append(btnEliminar);
+        filaElemento.append(nombreProducto);
+        filaElemento.append(cantidadProducto);
+        filaElemento.append(btnProducto);
+
+        carrito.append(filaElemento);
+    }
+
+    const actualizarCantidad = (nombre, cantidadNueva) => {
+        const filas = carrito.querySelectorAll('tr');
+        filas.forEach((fila) => {
+            if (fila.children[0].textContent === nombre) {
+                fila.children[1].textContent = cantidadNueva;
+            }
+        })
+    }
 
 
 
-const eliminarProducto = () => {
-    //al hacer clic, debe decrementar el contador de ese producto. 
-    // Si el contador llega a cero, el producto debe eliminarse de la lista y del Local Storage.
-}
+
+    // const eliminarProducto = () => {
+    //     //al hacer clic, debe decrementar el contador de ese producto. 
+    //     // Si el contador llega a cero, el producto debe eliminarse de la lista y del Local Storage.
+    // }
+
+});
