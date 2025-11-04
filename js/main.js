@@ -4,9 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const formulario = document.querySelector('#formulario');
     const producto = document.querySelector('#producto');
     const carrito = document.querySelector('#carrito');
-    const botonEliminar = document.querySelectorAll('.eliminar');
-
-    cargarProductos();
+    // const botonEliminar = document.querySelectorAll('.eliminar');
+    console.log(formulario)
 
     //EVENTOS
     //Agregar producto
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //cargar los productos del locaStorage al cargar la página
     //esta declarada con "function" para poder llamarla antes del declarar
-    function cargarProductos() {
+    const cargarProductos = () => {
         let listaProductos = JSON.parse(localStorage.getItem('productosLocal')) || [];
         //limpiar el carrito antes de recargar los productos
         carrito.innerHTML = '';
@@ -115,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let listaProductos = JSON.parse(localStorage.getItem('productosLocal')) || [];
         const productoAEliminar = listaProductos.find((producto) => producto.nombre === nombreProducto)
         productoAEliminar.cantidad--;
-        if (productoAEliminar.cantidad > 1) {
+        if (productoAEliminar.cantidad > 0) {
             fila.children[1].textContent = productoAEliminar.cantidad;
         } else {
             //filtramos y eliminamos de la lista el producto del botón clicado.
@@ -124,5 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         localStorage.setItem('productosLocal', JSON.stringify(listaProductos));
     }
+
+    cargarProductos();
+
 
 });
